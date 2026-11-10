@@ -3,3 +3,7 @@
  docker run -d --name TEST -e NODE_ENV=testing -p 3002:3000 node-app:latest
 
  docker run -d --name PROD -e NODE_ENV=production -p 3003:3000 node-app:latest
+
+
+
+One important DevOps principle: Your Docker image contains the application; environment variables supply the configuration. This lets you promote the same tested image from development to testing and production without rebuilding it just to change configuration. For production, also use pinned dependency versions, a lockfile with npm ci, and a non-root container user.
