@@ -1,0 +1,5 @@
+ docker run -d --name DEV -e NODE_ENV=development -p 3001:3000 node-app:latest
+
+ docker run -d --name TEST -e NODE_ENV=testing -p 3002:3000 node-app:latest
+
+ docker run -d --name PROD -e NODE_ENV=production -p 3003:3000 node-app:latest
