@@ -7,3 +7,28 @@
 
 
 One important DevOps principle: Your Docker image contains the application; environment variables supply the configuration. This lets you promote the same tested image from development to testing and production without rebuilding it just to change configuration. For production, also use pinned dependency versions, a lockfile with npm ci, and a non-root container user.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+# ENV VARIABLES AND ARG IN THE SAME DOCKERFILE
+
+FROM node:latest
+
+WORKDIR /app/data
+
+COPY package*.json ./
+
+ENV NODE_ENV=development
+
+ARG NODE=general.js
+
+COPY $NODE ./general.js
+
+RUN npm install
+
+EXPOSE 3000
+
+CMD ["node", "general.js"]
+
+#ARG IS TO BUILD ONLY IMAGE : docker build --build-arg NODE=app.js -t node .
+#ENV IS ONLY TO RUN APP: docker run -itd --name NC -e NODE_ENV=testing -p 3011:3000 node:latest
+
