@@ -1,0 +1,64 @@
+# Stage 1: Build and install dependencies
+FROM node:latest AS Build
+
+WORKDIR /data
+
+COPY package*.json ./
+RUN npm install
+
+# Copy your application source code into the Build stage
+COPY . .
+
+
+# Stage 2: Production / Runtime image
+FROM node:alpine
+
+WORKDIR /data
+
+ENV NODE_ENV=testing
+
+# Copy installed dependencies and application code from the Build stage
+COPY --from=Build /data/node_modules ./node_modules
+COPY --from=Build /data/server.js ./server.js
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
+
+       OR
+
+# Stage 1: Build and install dependencies
+FROM node:22-alpine AS build
+
+WORKDIR /data
+
+COPY package*.json ./
+
+RUN npm ci
+
+COPY . .
+
+# Remove development dependencies
+RUN npm prune --omit=dev
+
+
+# Stage 2: Production runtime
+FROM node:22-alpine AS production
+
+WORKDIR /data
+
+ENV NODE_ENV=production
+
+# Copy production dependencies
+COPY --from=build --chown=node:node /data/node_modules ./node_modules
+
+# Copy application files
+COPY --from=build --chown=node:node /data/package.json ./package.json
+COPY --from=build --chown=node:node /data/server.js ./server.js
+
+# Run as non-root user
+USER node
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
