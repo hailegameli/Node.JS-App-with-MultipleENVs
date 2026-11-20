@@ -1,5 +1,5 @@
 # Stage 1: Build and install dependencies
-FROM node:latest AS Build
+FROM node:latest AS build
 
 WORKDIR /data
 
