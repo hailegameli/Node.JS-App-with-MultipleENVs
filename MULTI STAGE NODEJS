@@ -4,6 +4,7 @@ FROM node:latest AS Build
 WORKDIR /data
 
 COPY package*.json ./
+
 RUN npm install
 
 # Copy your application source code into the Build stage
