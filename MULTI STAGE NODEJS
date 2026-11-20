@@ -1,5 +1,5 @@
 # Stage 1: Build and install dependencies
-FROM node:latest AS build
+FROM node:node:18 AS build    #build must be lowecase
 
 WORKDIR /data
 
@@ -10,17 +10,19 @@ RUN npm install
 # Copy your application source code into the Build stage
 COPY . .
 
-
 # Stage 2: Production / Runtime image
-FROM node:alpine
+FROM node:18-alpine   #light weight and lower libraries
 
 WORKDIR /data
 
 ENV NODE_ENV=testing
 
-# Copy installed dependencies and application code from the Build stage
-COPY --from=Build /data/node_modules ./node_modules
-COPY --from=Build /data/server.js ./server.js
+# Copy installed dependencies from build stage
+COPY --from=build /data/node_modules ./node_modules
+
+# Copy application code from the build stage
+COPY --from=build /app/package*.json ./
+COPY --from=build /data/server.js ./server.js
 
 EXPOSE 3000
 
